@@ -1,4 +1,4 @@
-package com.postechlances.producao.data.controller.crud;
+package com.postechlances.producao.domain.service.crud;
 
 import com.postechlances.producao.data.dto.crud.request.ItemListaPedidoCreateRequestDTO;
 import com.postechlances.producao.data.dto.crud.request.ItemListaPedidoDeleteRequestDTO;
@@ -8,14 +8,16 @@ import com.postechlances.producao.data.dto.crud.response.ItemListaPedidoCreateRe
 import com.postechlances.producao.data.dto.crud.response.ItemListaPedidoDeleteResponseDTO;
 import com.postechlances.producao.data.dto.crud.response.ItemListaPedidoListResponseDTO;
 import com.postechlances.producao.data.dto.crud.response.ItemListaPedidoUpdateResponseDTO;
-import com.postechlances.producao.infra.mapper.response.ResponseModel;
+import org.springframework.stereotype.Service;
 
-public interface IItemListaPedidoCrudController {
-  public ResponseModel<ItemListaPedidoCreateResponseDTO> create(ItemListaPedidoCreateRequestDTO request);
+import java.util.List;
 
-  public ResponseModel<ItemListaPedidoListResponseDTO> list(ItemListaPedidoListRequestDTO request);
+public interface IItemListaPedidoCrudService {
+  public ItemListaPedidoCreateResponseDTO create(ItemListaPedidoCreateRequestDTO request);
 
-  public ResponseModel<ItemListaPedidoUpdateResponseDTO> update(ItemListaPedidoUpdateRequestDTO request);
+  public List<ItemListaPedidoListResponseDTO> list(ItemListaPedidoListRequestDTO request);
 
-  public ResponseModel<ItemListaPedidoDeleteResponseDTO> delete(ItemListaPedidoDeleteRequestDTO request);
+  public ItemListaPedidoUpdateResponseDTO update(ItemListaPedidoUpdateRequestDTO request);
+
+  public ItemListaPedidoDeleteResponseDTO delete(ItemListaPedidoDeleteRequestDTO request);
 }

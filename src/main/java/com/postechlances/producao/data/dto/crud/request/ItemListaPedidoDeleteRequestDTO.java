@@ -1,4 +1,4 @@
 package com.postechlances.producao.data.dto.crud.request;
 
-public class ItemListaPedidoDeeteRequestDTO {
+public class ItemListaPedidoDeleteRequestDTO {
 }
