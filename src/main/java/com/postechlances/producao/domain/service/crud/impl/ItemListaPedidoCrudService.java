@@ -17,7 +17,9 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ItemListaPedidoCrudService implements IItemListaPedidoCrudService {
@@ -32,13 +34,25 @@ public class ItemListaPedidoCrudService implements IItemListaPedidoCrudService {
 
   @Override
   public ItemListaPedidoCreateResponseDTO create(ItemListaPedidoCreateRequestDTO request) {
-    ItemListaPedido createdItem = repository.save(mapper.toObject(request, ItemListaPedido.class));
+    ItemListaPedido itemToCreate = mapper.toObject(request, ItemListaPedido.class);
+    itemToCreate.setRecebimento(new Date());
+    ItemListaPedido createdItem = repository.save(itemToCreate);
     return mapper.toObject(createdItem, ItemListaPedidoCreateResponseDTO.class);
   }
 
   @Override
   public List<ItemListaPedidoListResponseDTO> list(ItemListaPedidoListRequestDTO request) {
-    return null;
+    List<ItemListaPedido> itemsList = repository.findAll();
+    return mapper.toList(itemsList, ItemListaPedidoListResponseDTO.class);
+  }
+
+  @Override
+  public ItemListaPedidoListResponseDTO detail(Long id) {
+    Optional<ItemListaPedido> item = repository.findById(id);
+    if(item.isPresent())
+      return mapper.toObject(item, ItemListaPedidoListResponseDTO.class);
+    else
+      return null;
   }
 
   @Override
@@ -47,7 +61,12 @@ public class ItemListaPedidoCrudService implements IItemListaPedidoCrudService {
   }
 
   @Override
-  public ItemListaPedidoDeleteResponseDTO delete(ItemListaPedidoDeleteRequestDTO request) {
-    return null;
+  public ItemListaPedidoDeleteResponseDTO delete(Long id) {
+    Optional<ItemListaPedido> item = repository.findById(id);
+    if(item.isPresent()) {
+      repository.delete(item.get());
+      return mapper.toObject(item, ItemListaPedidoDeleteResponseDTO.class);
+    } else
+      return null;
   }
 }

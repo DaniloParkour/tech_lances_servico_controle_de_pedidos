@@ -13,7 +13,6 @@ import com.postechlances.producao.data.dto.crud.response.ItemListaPedidoUpdateRe
 import com.postechlances.producao.domain.service.crud.IItemListaPedidoCrudService;
 import com.postechlances.producao.infra.mapper.response.ResponseModel;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -37,10 +36,19 @@ public class ItemListaPedidoCrudController implements IItemListaPedidoCrudContro
 
   @Override
   @GetMapping
-  public ResponseModel<ItemListaPedidoListResponseDTO> list(@RequestBody ItemListaPedidoListRequestDTO request) {
+  public ResponseModel<ItemListaPedidoListResponseDTO> list(@ModelAttribute ItemListaPedidoListRequestDTO request) {
     ResponseModel<ItemListaPedidoListResponseDTO> response = new ResponseModel<ItemListaPedidoListResponseDTO>();
     List<ItemListaPedidoListResponseDTO> listOfItems = service.list(request);
     response.setList(listOfItems);
+    return response;
+  }
+
+  @Override
+  @GetMapping("/{id}")
+  public ResponseModel<ItemListaPedidoListResponseDTO> detail(@PathVariable Long id) {
+    ResponseModel<ItemListaPedidoListResponseDTO> response = new ResponseModel<ItemListaPedidoListResponseDTO>();
+    ItemListaPedidoListResponseDTO item = service.detail(id);
+    response.setData(item);
     return response;
   }
 
@@ -54,10 +62,10 @@ public class ItemListaPedidoCrudController implements IItemListaPedidoCrudContro
   }
 
   @Override
-  @DeleteMapping
-  public ResponseModel<ItemListaPedidoDeleteResponseDTO> delete(@RequestBody ItemListaPedidoDeleteRequestDTO request) {
+  @DeleteMapping("/{id}")
+  public ResponseModel<ItemListaPedidoDeleteResponseDTO> delete(@PathVariable Long id) {
     ResponseModel<ItemListaPedidoDeleteResponseDTO> response = new ResponseModel<ItemListaPedidoDeleteResponseDTO>();
-    ItemListaPedidoDeleteResponseDTO deletedItem = service.delete(request);
+    ItemListaPedidoDeleteResponseDTO deletedItem = service.delete(id);
     response.setData(deletedItem);
     return response;
   }

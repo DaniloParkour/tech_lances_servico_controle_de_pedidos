@@ -17,7 +17,9 @@ public interface IItemListaPedidoCrudService {
 
   public List<ItemListaPedidoListResponseDTO> list(ItemListaPedidoListRequestDTO request);
 
+  public ItemListaPedidoListResponseDTO detail(Long id);
+
   public ItemListaPedidoUpdateResponseDTO update(ItemListaPedidoUpdateRequestDTO request);
 
-  public ItemListaPedidoDeleteResponseDTO delete(ItemListaPedidoDeleteRequestDTO request);
+  public ItemListaPedidoDeleteResponseDTO delete(Long id);
 }
