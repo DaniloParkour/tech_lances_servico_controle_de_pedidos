@@ -14,14 +14,13 @@ import com.postechlances.producao.domain.service.crud.IItemListaPedidoCrudServic
 import com.postechlances.producao.infra.mapper.response.ResponseModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Controller
+@RestController
+@RequestMapping("/itemlistapedido")
+@CrossOrigin(origins = "http://localhost:3000")
 public class ItemListaPedidoCrudController implements IItemListaPedidoCrudController {
 
   @Autowired
@@ -29,7 +28,7 @@ public class ItemListaPedidoCrudController implements IItemListaPedidoCrudContro
 
   @Override
   @PostMapping
-  public ResponseModel<ItemListaPedidoCreateResponseDTO> create(ItemListaPedidoCreateRequestDTO request) {
+  public ResponseModel<ItemListaPedidoCreateResponseDTO> create(@RequestBody ItemListaPedidoCreateRequestDTO request) {
     ResponseModel<ItemListaPedidoCreateResponseDTO> response = new ResponseModel<ItemListaPedidoCreateResponseDTO>();
     ItemListaPedidoCreateResponseDTO createdItem = service.create(request);
     response.setData(createdItem);
@@ -38,7 +37,7 @@ public class ItemListaPedidoCrudController implements IItemListaPedidoCrudContro
 
   @Override
   @GetMapping
-  public ResponseModel<ItemListaPedidoListResponseDTO> list(ItemListaPedidoListRequestDTO request) {
+  public ResponseModel<ItemListaPedidoListResponseDTO> list(@RequestBody ItemListaPedidoListRequestDTO request) {
     ResponseModel<ItemListaPedidoListResponseDTO> response = new ResponseModel<ItemListaPedidoListResponseDTO>();
     List<ItemListaPedidoListResponseDTO> listOfItems = service.list(request);
     response.setList(listOfItems);
@@ -47,7 +46,7 @@ public class ItemListaPedidoCrudController implements IItemListaPedidoCrudContro
 
   @Override
   @PutMapping
-  public ResponseModel<ItemListaPedidoUpdateResponseDTO> update(ItemListaPedidoUpdateRequestDTO request) {
+  public ResponseModel<ItemListaPedidoUpdateResponseDTO> update(@RequestBody ItemListaPedidoUpdateRequestDTO request) {
     ResponseModel<ItemListaPedidoUpdateResponseDTO> response = new ResponseModel<ItemListaPedidoUpdateResponseDTO>();
     ItemListaPedidoUpdateResponseDTO updatedItem = service.update(request);
     response.setData(updatedItem);
@@ -56,7 +55,7 @@ public class ItemListaPedidoCrudController implements IItemListaPedidoCrudContro
 
   @Override
   @DeleteMapping
-  public ResponseModel<ItemListaPedidoDeleteResponseDTO> delete(ItemListaPedidoDeleteRequestDTO request) {
+  public ResponseModel<ItemListaPedidoDeleteResponseDTO> delete(@RequestBody ItemListaPedidoDeleteRequestDTO request) {
     ResponseModel<ItemListaPedidoDeleteResponseDTO> response = new ResponseModel<ItemListaPedidoDeleteResponseDTO>();
     ItemListaPedidoDeleteResponseDTO deletedItem = service.delete(request);
     response.setData(deletedItem);

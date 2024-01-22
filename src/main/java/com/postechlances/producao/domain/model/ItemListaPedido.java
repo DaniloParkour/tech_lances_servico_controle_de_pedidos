@@ -15,8 +15,8 @@ public class ItemListaPedido {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
-  private String id_pedido;
-  private String id_cliente;
+  private String identifier_pedido;
+  private String identifier_cliente;
   private Date recebimento;
   private Date fechamento;
   private Date pagamento;

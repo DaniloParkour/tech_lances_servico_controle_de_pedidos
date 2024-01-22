@@ -8,6 +8,8 @@ import com.postechlances.producao.data.dto.crud.response.ItemListaPedidoCreateRe
 import com.postechlances.producao.data.dto.crud.response.ItemListaPedidoDeleteResponseDTO;
 import com.postechlances.producao.data.dto.crud.response.ItemListaPedidoListResponseDTO;
 import com.postechlances.producao.data.dto.crud.response.ItemListaPedidoUpdateResponseDTO;
+import com.postechlances.producao.domain.model.ItemListaPedido;
+import com.postechlances.producao.domain.repository.ItemListaPedidoRepository;
 import com.postechlances.producao.domain.service.crud.IItemListaPedidoCrudService;
 import com.postechlances.producao.infra.mapper.IGenericMapper;
 import org.apache.logging.log4j.LogManager;
@@ -25,9 +27,13 @@ public class ItemListaPedidoCrudService implements IItemListaPedidoCrudService {
   @Autowired
   private IGenericMapper mapper;
 
+  @Autowired
+  private ItemListaPedidoRepository repository;
+
   @Override
   public ItemListaPedidoCreateResponseDTO create(ItemListaPedidoCreateRequestDTO request) {
-    return null;
+    ItemListaPedido createdItem = repository.save(mapper.toObject(request, ItemListaPedido.class));
+    return mapper.toObject(createdItem, ItemListaPedidoCreateResponseDTO.class);
   }
 
   @Override
