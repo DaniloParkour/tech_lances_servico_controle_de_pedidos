@@ -9,10 +9,10 @@ import java.util.List;
 public class ItemListaPedidoCreateRequestDTO {
   private String identifier_pedido;
   private String identifier_cliente;
-  //private Date recebimento;
-  //private Date fechamento;
-  //private Date pagamento;
-  //private String status;
+  private Date recebimento;
+  private Date fechamento;
+  private Date pagamento;
+  private String status;
   private List<String> itens;
   private List<String> preparo;
 }

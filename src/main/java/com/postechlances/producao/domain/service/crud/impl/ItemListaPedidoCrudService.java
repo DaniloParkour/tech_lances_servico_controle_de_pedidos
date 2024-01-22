@@ -12,6 +12,7 @@ import com.postechlances.producao.domain.model.ItemListaPedido;
 import com.postechlances.producao.domain.repository.ItemListaPedidoRepository;
 import com.postechlances.producao.domain.service.crud.IItemListaPedidoCrudService;
 import com.postechlances.producao.infra.mapper.IGenericMapper;
+import com.postechlances.producao.infra.mapper.response.ResponseModel;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,7 +58,12 @@ public class ItemListaPedidoCrudService implements IItemListaPedidoCrudService {
 
   @Override
   public ItemListaPedidoUpdateResponseDTO update(ItemListaPedidoUpdateRequestDTO request) {
-    return null;
+    Optional<ItemListaPedido> item = repository.findById(request.getId());
+    if(item.isPresent()) {
+      ItemListaPedido updatedItem = repository.save(mapper.toObject(request, ItemListaPedido.class));
+      return mapper.toObject(updatedItem, ItemListaPedidoUpdateResponseDTO.class);
+    } else
+      return null;
   }
 
   @Override
