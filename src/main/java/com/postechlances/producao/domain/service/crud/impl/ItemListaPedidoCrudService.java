@@ -19,6 +19,8 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.sql.Time;
+import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -37,7 +39,7 @@ public class ItemListaPedidoCrudService implements IItemListaPedidoCrudService {
   @Override
   public ItemListaPedidoCreateResponseDTO create(ItemListaPedidoCreateRequestDTO request) {
     ItemListaPedido itemToCreate = mapper.toObject(request, ItemListaPedido.class);
-    itemToCreate.setRecebimento(new Date());
+    itemToCreate.setRecebimento(new Timestamp(new Date().getTime()));
     itemToCreate.setStatus(StatusPedido.SOLICITADO);
     ItemListaPedido createdItem = repository.save(itemToCreate);
     return mapper.toObject(createdItem, ItemListaPedidoCreateResponseDTO.class);
@@ -82,13 +84,15 @@ public class ItemListaPedidoCrudService implements IItemListaPedidoCrudService {
   public ItemListaPedidoUpdateResponseDTO advanceStatus(Long idPedido) {
     Optional<ItemListaPedido> item = repository.findById(idPedido);
     if(item.isPresent()) {
-      if(item.get().getStatus().equals(StatusPedido.SOLICITADO))
+      if(item.get().getStatus().equals(StatusPedido.SOLICITADO)) {
         item.get().setStatus(StatusPedido.EM_PRODUCAO);
-      else if(item.get().getStatus().equals(StatusPedido.EM_PRODUCAO))
+      } else if(item.get().getStatus().equals(StatusPedido.EM_PRODUCAO)) {
         item.get().setStatus(StatusPedido.PRONTO);
-      else if(item.get().getStatus().equals(StatusPedido.PRONTO))
+        item.get().setFechamento(new Timestamp(new Date().getTime()));
+      } else if(item.get().getStatus().equals(StatusPedido.PRONTO)) {
         item.get().setStatus(StatusPedido.FINALIZADO);
-      else return  null;
+        item.get().setPagamento(new Timestamp(new Date().getTime()));
+      } else return  null;
 
       ItemListaPedido updatedItem = repository.save(mapper.toObject(item.get(), ItemListaPedido.class));
       return mapper.toObject(updatedItem, ItemListaPedidoUpdateResponseDTO.class);

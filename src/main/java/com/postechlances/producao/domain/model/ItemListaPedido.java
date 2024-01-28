@@ -4,6 +4,7 @@ import com.postechlances.producao.domain.enums.StatusPedido;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
 
@@ -15,9 +16,9 @@ public class ItemListaPedido {
   private Long id;
   private String identifier_pedido;
   private String identifier_cliente;
-  private Date recebimento;
-  private Date fechamento;
-  private Date pagamento;
+  private Timestamp recebimento;
+  private Timestamp fechamento;
+  private Timestamp pagamento;
 
   @Enumerated(EnumType.STRING)
   private StatusPedido status;
