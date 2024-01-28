@@ -8,6 +8,7 @@ import com.postechlances.producao.data.dto.crud.response.ItemListaPedidoCreateRe
 import com.postechlances.producao.data.dto.crud.response.ItemListaPedidoDeleteResponseDTO;
 import com.postechlances.producao.data.dto.crud.response.ItemListaPedidoListResponseDTO;
 import com.postechlances.producao.data.dto.crud.response.ItemListaPedidoUpdateResponseDTO;
+import com.postechlances.producao.domain.enums.StatusPedido;
 import com.postechlances.producao.infra.mapper.response.ResponseModel;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,4 +24,6 @@ public interface IItemListaPedidoCrudController {
 
   @DeleteMapping("/{id}")
   ResponseModel<ItemListaPedidoDeleteResponseDTO> delete(@PathVariable Long id);
+
+  ResponseModel<ItemListaPedidoUpdateResponseDTO> advanceStatus(@PathVariable Long idPedido);
 }

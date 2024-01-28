@@ -8,6 +8,7 @@ import com.postechlances.producao.data.dto.crud.response.ItemListaPedidoCreateRe
 import com.postechlances.producao.data.dto.crud.response.ItemListaPedidoDeleteResponseDTO;
 import com.postechlances.producao.data.dto.crud.response.ItemListaPedidoListResponseDTO;
 import com.postechlances.producao.data.dto.crud.response.ItemListaPedidoUpdateResponseDTO;
+import com.postechlances.producao.domain.enums.StatusPedido;
 import com.postechlances.producao.domain.model.ItemListaPedido;
 import com.postechlances.producao.domain.repository.ItemListaPedidoRepository;
 import com.postechlances.producao.domain.service.crud.IItemListaPedidoCrudService;
@@ -37,6 +38,7 @@ public class ItemListaPedidoCrudService implements IItemListaPedidoCrudService {
   public ItemListaPedidoCreateResponseDTO create(ItemListaPedidoCreateRequestDTO request) {
     ItemListaPedido itemToCreate = mapper.toObject(request, ItemListaPedido.class);
     itemToCreate.setRecebimento(new Date());
+    itemToCreate.setStatus(StatusPedido.SOLICITADO);
     ItemListaPedido createdItem = repository.save(itemToCreate);
     return mapper.toObject(createdItem, ItemListaPedidoCreateResponseDTO.class);
   }
@@ -72,6 +74,24 @@ public class ItemListaPedidoCrudService implements IItemListaPedidoCrudService {
     if(item.isPresent()) {
       repository.delete(item.get());
       return mapper.toObject(item, ItemListaPedidoDeleteResponseDTO.class);
+    } else
+      return null;
+  }
+
+  @Override
+  public ItemListaPedidoUpdateResponseDTO advanceStatus(Long idPedido) {
+    Optional<ItemListaPedido> item = repository.findById(idPedido);
+    if(item.isPresent()) {
+      if(item.get().getStatus().equals(StatusPedido.SOLICITADO))
+        item.get().setStatus(StatusPedido.EM_PRODUCAO);
+      else if(item.get().getStatus().equals(StatusPedido.EM_PRODUCAO))
+        item.get().setStatus(StatusPedido.PRONTO);
+      else if(item.get().getStatus().equals(StatusPedido.PRONTO))
+        item.get().setStatus(StatusPedido.FINALIZADO);
+      else return  null;
+
+      ItemListaPedido updatedItem = repository.save(mapper.toObject(item.get(), ItemListaPedido.class));
+      return mapper.toObject(updatedItem, ItemListaPedidoUpdateResponseDTO.class);
     } else
       return null;
   }

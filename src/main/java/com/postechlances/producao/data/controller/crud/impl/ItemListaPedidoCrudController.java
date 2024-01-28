@@ -10,6 +10,7 @@ import com.postechlances.producao.data.dto.crud.response.ItemListaPedidoCreateRe
 import com.postechlances.producao.data.dto.crud.response.ItemListaPedidoDeleteResponseDTO;
 import com.postechlances.producao.data.dto.crud.response.ItemListaPedidoListResponseDTO;
 import com.postechlances.producao.data.dto.crud.response.ItemListaPedidoUpdateResponseDTO;
+import com.postechlances.producao.domain.enums.StatusPedido;
 import com.postechlances.producao.domain.service.crud.IItemListaPedidoCrudService;
 import com.postechlances.producao.infra.mapper.response.ResponseModel;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,5 +69,18 @@ public class ItemListaPedidoCrudController implements IItemListaPedidoCrudContro
     ItemListaPedidoDeleteResponseDTO deletedItem = service.delete(id);
     response.setData(deletedItem);
     return response;
+  }
+
+  @Override
+  @GetMapping("/advancestatus/{idPedido}")
+  public ResponseModel<ItemListaPedidoUpdateResponseDTO> advanceStatus(@PathVariable Long idPedido) {
+    ResponseModel<ItemListaPedidoUpdateResponseDTO> response = new ResponseModel<ItemListaPedidoUpdateResponseDTO>();
+    response.setData(service.advanceStatus(idPedido));
+    if(response.getData() != null) {
+      response.setStatus("SUCCESS");
+      response.setMessage("Status alterado para " + response.getData().getStatus());
+      return response;
+    }
+    return null;
   }
 }
