@@ -32,11 +32,9 @@
 ### Avançar Status
 **GET:** http://localhost:8080/itemlistapedido/advancestatus/{id}
 * **Fluxo:** EM_PRODUCAO => PRONTO => FINALIZADO
-| Status | Descrição |
-| ------------- |:-------------:|
-| EM_PRODUCAO      | Status inicial, quando é cadastrado um pedido já pago     |
-| PRONTO      | Quando o pedido está pronto mas o cliente ainda não pegou     |
-| FINALIZADO      | Cliente pegou o produto no balcão     |
+* EM_PRODUCAO: Status inicial, quando é cadastrado um pedido já pago
+* PRONTO: Quando o pedido está pronto mas o cliente ainda não pegou
+* FINALIZADO: Cliente pegou o produto no balcão
 
 ### Deletar Pedido
 **DELETE:** http://localhost:8080/itemlistapedido/{id}
