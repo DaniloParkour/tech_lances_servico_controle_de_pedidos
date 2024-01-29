@@ -14,6 +14,8 @@ import com.postechlances.producao.domain.repository.ItemListaPedidoRepository;
 import com.postechlances.producao.domain.service.crud.IItemListaPedidoCrudService;
 import com.postechlances.producao.infra.mapper.IGenericMapper;
 import com.postechlances.producao.infra.mapper.response.ResponseModel;
+import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,15 +28,15 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
+@AllArgsConstructor
 public class ItemListaPedidoCrudService implements IItemListaPedidoCrudService {
 
   private Logger logger = LogManager.getLogger(getClass());
 
-  @Autowired
-  private IGenericMapper mapper;
+  private final IGenericMapper mapper;
 
-  @Autowired
-  private ItemListaPedidoRepository repository;
+  private final ItemListaPedidoRepository repository;
 
   @Override
   public ItemListaPedidoCreateResponseDTO create(ItemListaPedidoCreateRequestDTO request) {

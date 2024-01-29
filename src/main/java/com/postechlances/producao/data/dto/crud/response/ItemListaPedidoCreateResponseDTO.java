@@ -1,7 +1,9 @@
 package com.postechlances.producao.data.dto.crud.response;
 
+import com.postechlances.producao.domain.enums.StatusPedido;
 import lombok.Data;
 
+import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
 
@@ -12,10 +14,10 @@ public class ItemListaPedidoCreateResponseDTO {
   //private String id_cliente;
   private String identifier_pedido;
   private String identifier_cliente;
-  private Date recebimento;
-  private Date fechamento;
-  private Date pagamento;
-  private String status;
+  private Timestamp recebimento;
+  private Timestamp fechamento;
+  private Timestamp pagamento;
+  private StatusPedido status;
   private List<String> itens;
   private List<String> preparo;
 }

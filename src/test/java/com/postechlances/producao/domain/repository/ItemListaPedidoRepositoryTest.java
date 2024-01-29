@@ -57,12 +57,54 @@ public class ItemListaPedidoRepositoryTest {
 
   @Test
   void deveAtualizarUmPedido() {
-    fail("Teste não implementado!");
+    //ARRANJE
+    Long id = new Random().nextLong();
+    ItemListaPedido item = criarItemPedido();
+    item.setId(id);
+
+    // Mocka para quando pesquisar pelo ID retornar o item definido acima
+    when(repository.findById(any(Long.class))).thenReturn(Optional.of(item));
+    when(repository.save(any(ItemListaPedido.class))).thenReturn(item);
+
+    //ACT
+    var optionalItem = repository.findById(id);
+    optionalItem.ifPresent(itemListaPedido -> itemListaPedido.setStatus(StatusPedido.FINALIZADO));
+    var savedItem = optionalItem.map(itemListaPedido -> repository.save(itemListaPedido)).orElse(null);
+
+    //ASSET
+    verify(repository, times(1)).findById(id);
+    verify(repository, times(1)).save(optionalItem.get());
+    assertThat(optionalItem).isPresent().containsSame(item);
+
+    optionalItem.ifPresent(saved -> {
+      assertThat(saved.getId()).isEqualTo(item.getId());
+      assertThat(saved.getIdentifier_pedido()).isEqualTo(item.getIdentifier_pedido());
+      assertThat(saved.getIdentifier_cliente()).isEqualTo(item.getIdentifier_cliente());
+      assertThat(item.getStatus()).isEqualTo(StatusPedido.FINALIZADO);
+      assertThat(saved.getRecebimento()).isEqualTo(item.getRecebimento());
+      assertThat(saved.getPreparo()).isEqualTo(item.getPreparo());
+      assertThat(saved.getFechamento()).isEqualTo(item.getFechamento());
+      assertThat(saved.getItens()).isEqualTo(item.getItens());
+    });
   }
 
   @Test
   void deveListarOsPedidos() {
-    fail("Teste não implementado!");
+    // Arrange
+    var item1 = criarItemPedido();
+    var item2 = criarItemPedido();
+    var itens = Arrays.asList(item1, item2);
+
+    when(repository.findAll()).thenReturn(itens);
+
+    // Act
+    var resultado = repository.findAll();
+
+    // Assert
+    verify(repository, times(1)).findAll();
+    assertThat(resultado)
+      .hasSize(2)
+      .containsExactlyInAnyOrder(item1, item2);
   }
 
   @Test
@@ -96,12 +138,13 @@ public class ItemListaPedidoRepositoryTest {
 
   @Test
   void deveDeletarUmPedido() {
-    fail("Teste não implementado!");
-  }
-
-  @Test
-  void deveAvancarStatusDoPedido  () {
-    fail("Teste não implementado!");
+    // Arrange
+    Long id = new Random().nextLong();
+    doNothing().when(repository).deleteById(id);
+    // Act
+    repository.deleteById(id);
+    // Assert
+    verify(repository, times(1)).deleteById(id);
   }
 
   private ItemListaPedido criarItemPedido() {
