@@ -197,7 +197,29 @@ public class ItemListaPedidoCrudServiceTest {
 
   @Test
   void devePermitirAvancarStatusDeUmItem() {
-    fail("Teste ainda não implementado!");
+
+    //ARRANJE
+    Long id = new Random().nextLong();
+    ItemListaPedido item = criarItemPedido();
+    item.setId(id);
+
+    when(repository.findById(any(Long.class))).thenReturn(Optional.of(item));
+    when(repository.save(any(ItemListaPedido.class))).thenReturn(item);
+
+    //ACT
+    ItemListaPedidoUpdateResponseDTO advancedItem = service.advanceStatus(id);
+
+    if(advancedItem != null) {
+      assertThat(advancedItem.getId()).isEqualTo(item.getId());
+      assertThat(advancedItem.getIdentifier_pedido()).isEqualTo(item.getIdentifier_pedido());
+      assertThat(advancedItem.getIdentifier_cliente()).isEqualTo(item.getIdentifier_cliente());
+      assertThat(advancedItem.getStatus()).isEqualTo(StatusPedido.EM_PRODUCAO.toString());
+      assertThat(advancedItem.getRecebimento()).isEqualTo(item.getRecebimento());
+      assertThat(advancedItem.getPreparo()).isEqualTo(item.getPreparo());
+      assertThat(advancedItem.getFechamento()).isEqualTo(item.getFechamento());
+      assertThat(advancedItem.getItens()).isEqualTo(item.getItens());
+    }
+
   }
 
   private ItemListaPedido criarItemPedido() {
