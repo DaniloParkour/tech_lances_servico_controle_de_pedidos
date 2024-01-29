@@ -9,9 +9,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
@@ -70,6 +68,98 @@ public class ItemListaPedidoRepositoryTest {
     items.add("Eno Guaraná");
     itemLista.setItens(items);
     return itemLista;
+  }
+
+  @Test
+  void deveAtualizarUmPedido() {
+    //ARRANJE
+    Long id = new Random().nextLong();
+    ItemListaPedido item = criarItemPedido();
+    item.setId(id);
+
+    // Mocka para quando pesquisar pelo ID retornar o item definido acima
+    when(repository.findById(any(Long.class))).thenReturn(Optional.of(item));
+    when(repository.save(any(ItemListaPedido.class))).thenReturn(item);
+
+    //ACT
+    var optionalItem = repository.findById(id);
+    optionalItem.ifPresent(itemListaPedido -> itemListaPedido.setStatus(StatusPedido.FINALIZADO));
+    var savedItem = optionalItem.map(itemListaPedido -> repository.save(itemListaPedido)).orElse(null);
+
+    //ASSET
+    verify(repository, times(1)).findById(id);
+    verify(repository, times(1)).save(optionalItem.get());
+    assertThat(optionalItem).isPresent().containsSame(item);
+
+    optionalItem.ifPresent(saved -> {
+      assertThat(saved.getId()).isEqualTo(item.getId());
+      assertThat(saved.getIdentifier_pedido()).isEqualTo(item.getIdentifier_pedido());
+      assertThat(saved.getIdentifier_cliente()).isEqualTo(item.getIdentifier_cliente());
+      assertThat(item.getStatus()).isEqualTo(StatusPedido.FINALIZADO);
+      assertThat(saved.getRecebimento()).isEqualTo(item.getRecebimento());
+      assertThat(saved.getPreparo()).isEqualTo(item.getPreparo());
+      assertThat(saved.getFechamento()).isEqualTo(item.getFechamento());
+      assertThat(saved.getItens()).isEqualTo(item.getItens());
+    });
+  }
+
+  @Test
+  void deveListarOsPedidos() {
+    // Arrange
+    var item1 = criarItemPedido();
+    var item2 = criarItemPedido();
+    var itens = Arrays.asList(item1, item2);
+
+    when(repository.findAll()).thenReturn(itens);
+
+    // Act
+    var resultado = repository.findAll();
+
+    // Assert
+    verify(repository, times(1)).findAll();
+    assertThat(resultado)
+      .hasSize(2)
+      .containsExactlyInAnyOrder(item1, item2);
+  }
+
+  @Test
+  void deveDetalharUmPedido() {
+    //ARRANJE
+    Long id = new Random().nextLong();
+    ItemListaPedido item = criarItemPedido();
+    item.setId(id);
+
+    // Mocka para quando pesquisar pelo ID retornar o item definido acima
+    when(repository.findById(any(Long.class))).thenReturn(Optional.of(item));
+
+    //ACT
+    var optionalItem = repository.findById(id);
+
+    //ASSET
+    verify(repository, times(1)).findById(id);
+    assertThat(optionalItem).isPresent().containsSame(item);
+
+    optionalItem.ifPresent(savedItem -> {
+      assertThat(savedItem.getId()).isEqualTo(item.getId());
+      assertThat(savedItem.getIdentifier_pedido()).isEqualTo(item.getIdentifier_pedido());
+      assertThat(savedItem.getIdentifier_cliente()).isEqualTo(item.getIdentifier_cliente());
+      assertThat(savedItem.getStatus()).isEqualTo(item.getStatus());
+      assertThat(savedItem.getRecebimento()).isEqualTo(item.getRecebimento());
+      assertThat(savedItem.getPreparo()).isEqualTo(item.getPreparo());
+      assertThat(savedItem.getFechamento()).isEqualTo(item.getFechamento());
+      assertThat(savedItem.getItens()).isEqualTo(item.getItens());
+    });
+  }
+
+  @Test
+  void deveDeletarUmPedido() {
+    // Arrange
+    Long id = new Random().nextLong();
+    doNothing().when(repository).deleteById(id);
+    // Act
+    repository.deleteById(id);
+    // Assert
+    verify(repository, times(1)).deleteById(id);
   }
 
 }
