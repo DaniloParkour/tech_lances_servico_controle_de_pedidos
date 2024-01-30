@@ -8,9 +8,7 @@ import com.postechlances.producao.data.dto.crud.response.ItemListaPedidoUpdateRe
 import com.postechlances.producao.domain.enums.StatusPedido;
 import com.postechlances.producao.domain.model.ItemListaPedido;
 import com.postechlances.producao.domain.repository.ItemListaPedidoRepository;
-import com.postechlances.producao.infra.mapper.IGenericMapper;
 import com.postechlances.producao.infra.mapper.impl.GenericMapper;
-import org.apache.logging.log4j.LogManager;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,7 +21,6 @@ import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
-import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.when;
 
 public class ItemListaPedidoCrudServiceTest {
@@ -141,15 +138,9 @@ public class ItemListaPedidoCrudServiceTest {
     }
 
     if(savedItem != null) {
-      //ASSET
-      //verify(repository, times(1)).findById(id);
-      //verify(repository, times(1)).save(findedItem);
-      //assertThat(optionalItem).isPresent().containsSame(item);
-
       assertThat(savedItem.getId()).isEqualTo(item.getId());
       assertThat(savedItem.getIdentifier_pedido()).isEqualTo(item.getIdentifier_pedido());
       assertThat(savedItem.getIdentifier_cliente()).isEqualTo(item.getIdentifier_cliente());
-      //assertThat(item.getStatus()).isEqualTo(StatusPedido.FINALIZADO);
       assertThat(savedItem.getRecebimento()).isEqualTo(item.getRecebimento());
       assertThat(savedItem.getPreparo()).isEqualTo(item.getPreparo());
       assertThat(savedItem.getFechamento()).isEqualTo(item.getFechamento());
