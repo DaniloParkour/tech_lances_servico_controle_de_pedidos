@@ -15,7 +15,6 @@ import com.postechlances.producao.domain.service.crud.IItemListaPedidoCrudServic
 import com.postechlances.producao.infra.mapper.IGenericMapper;
 import com.postechlances.producao.infra.mapper.response.ResponseModel;
 import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,11 +27,10 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-@RequiredArgsConstructor
 @AllArgsConstructor
 public class ItemListaPedidoCrudService implements IItemListaPedidoCrudService {
 
-  private Logger logger = LogManager.getLogger(getClass());
+  //private Logger logger = LogManager.getLogger(getClass());
 
   private final IGenericMapper mapper;
 
