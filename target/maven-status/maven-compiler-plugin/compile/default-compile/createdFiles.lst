@@ -18,4 +18,5 @@ com/postechlances/producao/infra/config/Beans.class
 com/postechlances/producao/data/controller/crud/IItemListaPedidoCrudController.class
 com/postechlances/producao/domain/repository/ItemListaPedidoRepository.class
 com/postechlances/producao/data/dto/crud/response/ItemListaPedidoListResponseDTO.class
+com/postechlances/producao/domain/model/ItemListaPedido$ItemListaPedidoBuilder.class
 com/postechlances/producao/data/controller/crud/impl/ItemListaPedidoCrudController.class

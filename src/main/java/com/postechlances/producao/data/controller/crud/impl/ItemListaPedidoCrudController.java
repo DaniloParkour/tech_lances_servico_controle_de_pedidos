@@ -14,6 +14,7 @@ import com.postechlances.producao.domain.enums.StatusPedido;
 import com.postechlances.producao.domain.service.crud.IItemListaPedidoCrudService;
 import com.postechlances.producao.infra.mapper.response.ResponseModel;
 import io.swagger.annotations.Api;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,6 +24,7 @@ import java.util.List;
 @RequestMapping("/itemlistapedido")
 @CrossOrigin(origins = "http://localhost:3000")
 @Api(value = "/itemlistapedido", description = "Operações CRUD e avançar STATUS para os pedidos")
+@AllArgsConstructor
 public class ItemListaPedidoCrudController implements IItemListaPedidoCrudController {
 
   @Autowired

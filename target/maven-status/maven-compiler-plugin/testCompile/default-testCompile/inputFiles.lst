@@ -1,1 +1,3 @@
-/home/danilo/Documentos/Projects/Postech/postechlanches/producao/src/test/java/com/postechlances/producao/ProducaoApplicationTests.java
+/home/danilo/Documentos/Projects/Postech/postechlanches/producao/src/test/java/com/postechlances/producao/domain/service/crud/impl/ItemListaPedidoCrudServiceTest.java
+/home/danilo/Documentos/Projects/Postech/postechlanches/producao/src/test/java/com/postechlances/producao/data/controller/crud/impl/ItemListaPedidoCrudControllerTest.java
+/home/danilo/Documentos/Projects/Postech/postechlanches/producao/src/test/java/com/postechlances/producao/domain/repository/ItemListaPedidoRepositoryTest.java

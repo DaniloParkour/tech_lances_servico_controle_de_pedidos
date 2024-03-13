@@ -1,1 +1,3 @@
-com/postechlances/producao/ProducaoApplicationTests.class
+com/postechlances/producao/domain/service/crud/impl/ItemListaPedidoCrudServiceTest.class
+com/postechlances/producao/data/controller/crud/impl/ItemListaPedidoCrudControllerTest.class
+com/postechlances/producao/domain/repository/ItemListaPedidoRepositoryTest.class
