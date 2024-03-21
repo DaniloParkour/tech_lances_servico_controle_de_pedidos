@@ -20,10 +20,4 @@ public class ApplicationController {
     return ResponseEntity.ok("OK");
   }
 
-  @GetMapping("/auxSendAdvanceStatus/{id}")
-  public ResponseEntity<String> advanceStatus(@PathVariable String id) {
-    techFoodProducer.auxSendAdvanceStatus(id);
-    return ResponseEntity.ok("Avançar Status do Pedido " + id);
-  }
-
 }
