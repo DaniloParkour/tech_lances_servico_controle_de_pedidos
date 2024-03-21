@@ -2,8 +2,6 @@ package com.postechlances.producao.infra.mapper.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Map;
@@ -17,7 +15,6 @@ import java.util.Map;
 public class ResponseModel<T> {
   @NonNull
   private String status;
-  //private Status status;
   private String message;
   private T data;
   private Long totalElements;

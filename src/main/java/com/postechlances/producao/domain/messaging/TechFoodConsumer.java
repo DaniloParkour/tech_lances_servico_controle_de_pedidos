@@ -17,19 +17,11 @@ public class TechFoodConsumer {
 
   @KafkaListener(topics = "pedido_para_producao", groupId = "tech_group_1")
   public void receiveMessage(String message) throws JsonProcessingException {
-
     ObjectMapper objectMapper = new ObjectMapper();
-
     PedidoParaProducaoConsumerDTO consumedData = objectMapper.readValue(message, PedidoParaProducaoConsumerDTO.class);
-
     ItemPedidoCreateRequestDTO newItemPedidoCreate = new ItemPedidoCreateRequestDTO();
     newItemPedidoCreate.setId(consumedData.pedidoId());
-
     itemListaPedidoCrudService.create(newItemPedidoCreate);
-
-    System.out.println("CONSUMER: ID lanche para avançar status = " + message);
-    System.out.println(consumedData.pedidoId());
-    System.out.println(consumedData.status());
   }
 
 }

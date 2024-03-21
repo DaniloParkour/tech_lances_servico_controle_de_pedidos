@@ -1,7 +1,5 @@
 package com.postechlances.producao.domain.service.crud.impl;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.postechlances.producao.data.dto.crud.request.ItemPedidoCreateRequestDTO;
 import com.postechlances.producao.data.dto.crud.response.ItemPedidoCreateResponseDTO;
 import com.postechlances.producao.domain.enums.StatusPedido;
@@ -11,10 +9,7 @@ import com.postechlances.producao.domain.repository.ItemListaPedidoRepository;
 import com.postechlances.producao.domain.service.crud.IItemListaPedidoCrudService;
 import com.postechlances.producao.infra.mapper.IGenericMapper;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
