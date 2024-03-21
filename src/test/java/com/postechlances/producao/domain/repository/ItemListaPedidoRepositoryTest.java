@@ -56,29 +56,21 @@ public class ItemListaPedidoRepositoryTest {
 
   private ItemListaPedido criarItemPedido() {
     var itemLista = new ItemListaPedido();
-    itemLista.setIdentifier_pedido("1");
-    itemLista.setIdentifier_cliente("10");
-    itemLista.setRecebimento(new Timestamp(new Date().getTime()));
+    itemLista.setId("av123po40dc");
     itemLista.setStatus(StatusPedido.SOLICITADO);
-    List<String> items = new ArrayList<String>();
-    items.add("Cheese Burguer");
-    items.add("Batata G c/ Bacon");
-    items.add("Sorvete de manga com cobertura de menta");
-    items.add("Coca Zero 1,5L");
-    items.add("Eno Guaraná");
-    itemLista.setItens(items);
+    itemLista.setCreated_at(new Date());
     return itemLista;
   }
 
   @Test
   void deveAtualizarUmPedido() {
     //ARRANJE
-    Long id = new Random().nextLong();
+    String id = "ab" + new Random().nextInt() + "cdf" ;
     ItemListaPedido item = criarItemPedido();
     item.setId(id);
 
     // Mocka para quando pesquisar pelo ID retornar o item definido acima
-    when(repository.findById(any(Long.class))).thenReturn(Optional.of(item));
+    when(repository.findById(any(String.class))).thenReturn(Optional.of(item));
     when(repository.save(any(ItemListaPedido.class))).thenReturn(item);
 
     //ACT
@@ -93,13 +85,7 @@ public class ItemListaPedidoRepositoryTest {
 
     optionalItem.ifPresent(saved -> {
       assertThat(saved.getId()).isEqualTo(item.getId());
-      assertThat(saved.getIdentifier_pedido()).isEqualTo(item.getIdentifier_pedido());
-      assertThat(saved.getIdentifier_cliente()).isEqualTo(item.getIdentifier_cliente());
       assertThat(item.getStatus()).isEqualTo(StatusPedido.FINALIZADO);
-      assertThat(saved.getRecebimento()).isEqualTo(item.getRecebimento());
-      assertThat(saved.getPreparo()).isEqualTo(item.getPreparo());
-      assertThat(saved.getFechamento()).isEqualTo(item.getFechamento());
-      assertThat(saved.getItens()).isEqualTo(item.getItens());
     });
   }
 
@@ -125,12 +111,12 @@ public class ItemListaPedidoRepositoryTest {
   @Test
   void deveDetalharUmPedido() {
     //ARRANJE
-    Long id = new Random().nextLong();
+    String id = "ab" + new Random().nextInt() + "cdf" ;
     ItemListaPedido item = criarItemPedido();
     item.setId(id);
 
     // Mocka para quando pesquisar pelo ID retornar o item definido acima
-    when(repository.findById(any(Long.class))).thenReturn(Optional.of(item));
+    when(repository.findById(any(String.class))).thenReturn(Optional.of(item));
 
     //ACT
     var optionalItem = repository.findById(id);
@@ -141,20 +127,14 @@ public class ItemListaPedidoRepositoryTest {
 
     optionalItem.ifPresent(savedItem -> {
       assertThat(savedItem.getId()).isEqualTo(item.getId());
-      assertThat(savedItem.getIdentifier_pedido()).isEqualTo(item.getIdentifier_pedido());
-      assertThat(savedItem.getIdentifier_cliente()).isEqualTo(item.getIdentifier_cliente());
       assertThat(savedItem.getStatus()).isEqualTo(item.getStatus());
-      assertThat(savedItem.getRecebimento()).isEqualTo(item.getRecebimento());
-      assertThat(savedItem.getPreparo()).isEqualTo(item.getPreparo());
-      assertThat(savedItem.getFechamento()).isEqualTo(item.getFechamento());
-      assertThat(savedItem.getItens()).isEqualTo(item.getItens());
     });
   }
 
   @Test
   void deveDeletarUmPedido() {
     // Arrange
-    Long id = new Random().nextLong();
+    String id = "ab" + new Random().nextInt() + "cdf" ;
     doNothing().when(repository).deleteById(id);
     // Act
     repository.deleteById(id);

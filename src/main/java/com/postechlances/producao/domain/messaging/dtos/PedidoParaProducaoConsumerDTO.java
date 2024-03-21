@@ -1,4 +1,3 @@
 package com.postechlances.producao.domain.messaging.dtos;
 
-public class PedidoParaProducaoConsumerDTO {
-}
+public record PedidoParaProducaoConsumerDTO(Boolean status, String pedidoId) {}

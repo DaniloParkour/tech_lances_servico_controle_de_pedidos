@@ -19,18 +19,8 @@ import java.util.List;
 @AllArgsConstructor
 public class ItemListaPedido {
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
-  private String identifier_pedido;
-  private String identifier_cliente;
-  private Timestamp recebimento;
-  private Timestamp fechamento;
-  private Timestamp pagamento;
-
+  private String id;
   @Enumerated(EnumType.STRING)
   private StatusPedido status;
-
-  private List<String> itens;
-  private List<String> preparo;
-  //private Cliente cliente;
+  private Date created_at;
 }

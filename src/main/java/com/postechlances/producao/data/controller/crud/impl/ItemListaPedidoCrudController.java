@@ -1,16 +1,10 @@
 package com.postechlances.producao.data.controller.crud.impl;
 
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.postechlances.producao.data.controller.crud.IItemListaPedidoCrudController;
-import com.postechlances.producao.data.dto.crud.request.ItemListaPedidoCreateRequestDTO;
-import com.postechlances.producao.data.dto.crud.request.ItemListaPedidoDeleteRequestDTO;
-import com.postechlances.producao.data.dto.crud.request.ItemListaPedidoListRequestDTO;
-import com.postechlances.producao.data.dto.crud.request.ItemListaPedidoUpdateRequestDTO;
-import com.postechlances.producao.data.dto.crud.response.ItemListaPedidoCreateResponseDTO;
-import com.postechlances.producao.data.dto.crud.response.ItemListaPedidoDeleteResponseDTO;
-import com.postechlances.producao.data.dto.crud.response.ItemListaPedidoListResponseDTO;
-import com.postechlances.producao.data.dto.crud.response.ItemListaPedidoUpdateResponseDTO;
-import com.postechlances.producao.domain.enums.StatusPedido;
+import com.postechlances.producao.data.dto.crud.request.ItemPedidoCreateRequestDTO;
+import com.postechlances.producao.data.dto.crud.response.ItemPedidoCreateResponseDTO;
 import com.postechlances.producao.domain.service.crud.IItemListaPedidoCrudService;
 import com.postechlances.producao.infra.mapper.response.ResponseModel;
 import io.swagger.annotations.Api;
@@ -32,54 +26,31 @@ public class ItemListaPedidoCrudController implements IItemListaPedidoCrudContro
 
   @Override
   @PostMapping
-  public ResponseModel<ItemListaPedidoCreateResponseDTO> create(@RequestBody ItemListaPedidoCreateRequestDTO request) {
-    ResponseModel<ItemListaPedidoCreateResponseDTO> response = new ResponseModel<ItemListaPedidoCreateResponseDTO>();
-    ItemListaPedidoCreateResponseDTO createdItem = service.create(request);
+  public ResponseModel<ItemPedidoCreateResponseDTO> create(@RequestBody ItemPedidoCreateRequestDTO request) {
+    ResponseModel<ItemPedidoCreateResponseDTO> response = new ResponseModel<ItemPedidoCreateResponseDTO>();
+    ItemPedidoCreateResponseDTO createdItem = service.create(request);
     response.setData(createdItem);
     return response;
   }
 
   @Override
   @GetMapping
-  public ResponseModel<ItemListaPedidoListResponseDTO> list(@ModelAttribute ItemListaPedidoListRequestDTO request) {
-    ResponseModel<ItemListaPedidoListResponseDTO> response = new ResponseModel<ItemListaPedidoListResponseDTO>();
-    List<ItemListaPedidoListResponseDTO> listOfItems = service.list(request);
+  public ResponseModel<ItemPedidoCreateResponseDTO> list() {
+    ResponseModel<ItemPedidoCreateResponseDTO> response = new ResponseModel<ItemPedidoCreateResponseDTO>();
+    List<ItemPedidoCreateResponseDTO> listOfItems = service.list();
     response.setList(listOfItems);
     return response;
   }
 
   @Override
-  @GetMapping("/{id}")
-  public ResponseModel<ItemListaPedidoListResponseDTO> detail(@PathVariable Long id) {
-    ResponseModel<ItemListaPedidoListResponseDTO> response = new ResponseModel<ItemListaPedidoListResponseDTO>();
-    ItemListaPedidoListResponseDTO item = service.detail(id);
-    response.setData(item);
-    return response;
-  }
-
-  @Override
-  @PutMapping
-  public ResponseModel<ItemListaPedidoUpdateResponseDTO> update(@RequestBody ItemListaPedidoUpdateRequestDTO request) {
-    ResponseModel<ItemListaPedidoUpdateResponseDTO> response = new ResponseModel<ItemListaPedidoUpdateResponseDTO>();
-    ItemListaPedidoUpdateResponseDTO updatedItem = service.update(request);
-    response.setData(updatedItem);
-    return response;
-  }
-
-  @Override
-  @DeleteMapping("/{id}")
-  public ResponseModel<ItemListaPedidoDeleteResponseDTO> delete(@PathVariable Long id) {
-    ResponseModel<ItemListaPedidoDeleteResponseDTO> response = new ResponseModel<ItemListaPedidoDeleteResponseDTO>();
-    ItemListaPedidoDeleteResponseDTO deletedItem = service.delete(id);
-    response.setData(deletedItem);
-    return response;
-  }
-
-  @Override
   @GetMapping("/advancestatus/{idPedido}")
-  public ResponseModel<ItemListaPedidoUpdateResponseDTO> advanceStatus(@PathVariable Long idPedido) {
-    ResponseModel<ItemListaPedidoUpdateResponseDTO> response = new ResponseModel<ItemListaPedidoUpdateResponseDTO>();
-    response.setData(service.advanceStatus(idPedido));
+  public ResponseModel<ItemPedidoCreateResponseDTO> advanceStatus(@PathVariable String idPedido) {
+    ResponseModel<ItemPedidoCreateResponseDTO> response = new ResponseModel<ItemPedidoCreateResponseDTO>();
+    try {
+      response.setData(service.advanceStatus(idPedido));
+    } catch (JsonProcessingException e) {
+      System.out.println("Erro JSON Parse!");
+    }
     if(response.getData() != null) {
       response.setStatus("SUCCESS");
       response.setMessage("Status alterado para " + response.getData().getStatus());

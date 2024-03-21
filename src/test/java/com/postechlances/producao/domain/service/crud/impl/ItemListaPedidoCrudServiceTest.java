@@ -1,11 +1,10 @@
 package com.postechlances.producao.domain.service.crud.impl;
 
-import com.postechlances.producao.data.dto.crud.request.ItemListaPedidoCreateRequestDTO;
-import com.postechlances.producao.data.dto.crud.request.ItemListaPedidoListRequestDTO;
-import com.postechlances.producao.data.dto.crud.request.ItemListaPedidoUpdateRequestDTO;
-import com.postechlances.producao.data.dto.crud.response.ItemListaPedidoCreateResponseDTO;
-import com.postechlances.producao.data.dto.crud.response.ItemListaPedidoUpdateResponseDTO;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.postechlances.producao.data.dto.crud.request.ItemPedidoCreateRequestDTO;
+import com.postechlances.producao.data.dto.crud.response.ItemPedidoCreateResponseDTO;
 import com.postechlances.producao.domain.enums.StatusPedido;
+import com.postechlances.producao.domain.messaging.TechFoodProducer;
 import com.postechlances.producao.domain.model.ItemListaPedido;
 import com.postechlances.producao.domain.repository.ItemListaPedidoRepository;
 import com.postechlances.producao.infra.mapper.impl.GenericMapper;
@@ -30,6 +29,9 @@ public class ItemListaPedidoCrudServiceTest {
   @Mock
   private ItemListaPedidoRepository repository;
 
+  @Mock
+  private TechFoodProducer techFoodProducer;
+
   AutoCloseable mock;
 
   @BeforeEach
@@ -37,7 +39,8 @@ public class ItemListaPedidoCrudServiceTest {
     mock = MockitoAnnotations.openMocks(this);
     service = new ItemListaPedidoCrudService(
       new GenericMapper(new ModelMapper()),
-      repository
+      repository,
+      techFoodProducer
     );
   }
 
@@ -54,19 +57,14 @@ public class ItemListaPedidoCrudServiceTest {
     when(repository.save(any(ItemListaPedido.class))).thenAnswer(i -> i.getArgument(0));
 
     //ACT
-    ItemListaPedidoCreateRequestDTO itemSaveDTO = new ItemListaPedidoCreateRequestDTO();
-    itemSaveDTO.setIdentifier_pedido(item.getIdentifier_pedido());
-    itemSaveDTO.setIdentifier_cliente(item.getIdentifier_cliente());
-    itemSaveDTO.setItens(item.getItens());
-    itemSaveDTO.setPreparo(item.getPreparo());
+    ItemPedidoCreateRequestDTO itemSaveDTO = new ItemPedidoCreateRequestDTO();
+    itemSaveDTO.setId(item.getId());
 
     var savedItem = service.create(itemSaveDTO);
 
     //ASSERT
-    assertThat(savedItem).isInstanceOf(ItemListaPedidoCreateResponseDTO.class).isNotNull();
-    assertThat(savedItem.getIdentifier_cliente()).isEqualTo(item.getIdentifier_cliente());
-    assertThat(savedItem.getIdentifier_pedido()).isEqualTo(item.getIdentifier_pedido());
-    assertThat(savedItem.getItens()).isEqualTo(item.getItens());
+    assertThat(savedItem).isInstanceOf(ItemPedidoCreateResponseDTO.class).isNotNull();
+    assertThat(savedItem.getId()).isEqualTo(item.getId());
     assertThat(savedItem.getStatus()).isEqualTo(item.getStatus());
 
   }
@@ -75,9 +73,9 @@ public class ItemListaPedidoCrudServiceTest {
   void devePermitirListarItens() {
     // Arrange
     var item1 = criarItemPedido();
-    item1.setId(new Random().nextLong());
+    item1.setId("ab" + new Random().nextInt() + "cdf");
     var item2 = criarItemPedido();
-    item2.setId(new Random().nextLong());
+    item2.setId("ab" + new Random().nextInt() + "cdf");
 
     var itens = Arrays.asList(
       item1,
@@ -87,7 +85,7 @@ public class ItemListaPedidoCrudServiceTest {
     when(repository.findAll()).thenReturn(itens);
 
     // Act
-    var resultado = service.list(new ItemListaPedidoListRequestDTO());
+    var resultado = service.list();
 
     // Assert
     verify(repository, times(1)).findAll();
@@ -95,137 +93,37 @@ public class ItemListaPedidoCrudServiceTest {
       .hasSize(2);
       //.containsExactlyInAnyOrder(item1, item2);
     assertThat(resultado.get(0).getId()).isEqualTo(item1.getId());
-    assertThat(resultado.get(0).getItens()).isEqualTo(item1.getItens());
     assertThat(resultado.get(0).getStatus()).isEqualTo(item1.getStatus().toString());
-    assertThat(resultado.get(0).getIdentifier_pedido()).isEqualTo(item1.getIdentifier_pedido());
-    assertThat(resultado.get(0).getIdentifier_cliente()).isEqualTo(item1.getIdentifier_cliente());
 
     assertThat(resultado.get(1).getId()).isEqualTo(item2.getId());
-    assertThat(resultado.get(1).getItens()).isEqualTo(item2.getItens());
     assertThat(resultado.get(1).getStatus()).isEqualTo(item2.getStatus().toString());
-    assertThat(resultado.get(1).getIdentifier_pedido()).isEqualTo(item2.getIdentifier_pedido());
-    assertThat(resultado.get(1).getIdentifier_cliente()).isEqualTo(item2.getIdentifier_cliente());
   }
 
   @Test
-  void devePermitirAlterarItem() {
+  void devePermitirAvancarStatusDeUmItem() throws JsonProcessingException {
+
     //ARRANJE
-    Long id = new Random().nextLong();
+    String id = "ab" + new Random().nextInt() + "cdf";
     ItemListaPedido item = criarItemPedido();
     item.setId(id);
 
-    // Mocka para quando pesquisar pelo ID retornar o item definido acima
-    when(repository.findById(any(Long.class))).thenReturn(Optional.of(item));
+    when(repository.findById(any(String.class))).thenReturn(Optional.of(item));
     when(repository.save(any(ItemListaPedido.class))).thenReturn(item);
 
     //ACT
-    var findedItem = service.detail(id);
-    ItemListaPedidoUpdateResponseDTO savedItem = null;
-    if(findedItem != null) {
-      findedItem.setStatus(StatusPedido.FINALIZADO.toString());
-      ItemListaPedidoUpdateRequestDTO itemToUpdate = new ItemListaPedidoUpdateRequestDTO();
-      itemToUpdate.setId(findedItem.getId());
-
-      itemToUpdate.setIdentifier_pedido(findedItem.getIdentifier_pedido());
-      itemToUpdate.setIdentifier_cliente(findedItem.getIdentifier_cliente());
-      itemToUpdate.setRecebimento(findedItem.getRecebimento());
-      itemToUpdate.setFechamento(findedItem.getFechamento());
-      itemToUpdate.setPagamento(findedItem.getPagamento());
-      itemToUpdate.setStatus(findedItem.getStatus());
-      itemToUpdate.setItens(findedItem.getItens());
-      itemToUpdate.setPreparo(findedItem.getPreparo());
-      savedItem = service.update(itemToUpdate);
-    }
-
-    if(savedItem != null) {
-      assertThat(savedItem.getId()).isEqualTo(item.getId());
-      assertThat(savedItem.getIdentifier_pedido()).isEqualTo(item.getIdentifier_pedido());
-      assertThat(savedItem.getIdentifier_cliente()).isEqualTo(item.getIdentifier_cliente());
-      assertThat(savedItem.getRecebimento()).isEqualTo(item.getRecebimento());
-      assertThat(savedItem.getPreparo()).isEqualTo(item.getPreparo());
-      assertThat(savedItem.getFechamento()).isEqualTo(item.getFechamento());
-      assertThat(savedItem.getItens()).isEqualTo(item.getItens());
-    }
-
-  }
-
-  @Test
-  void devePermitirDetalhar() {
-    // Arrange
-    Long id = new Random().nextLong();
-    var item = criarItemPedido();
-    item.setId(id);
-
-    when(repository.findById(any(Long.class)))
-      .thenReturn(Optional.of(item));
-
-    // Act
-    var optionalItem = repository.findById(id);
-
-    // Assert
-    verify(repository, times(1)).findById(id);
-    assertThat(optionalItem)
-      .isPresent()
-      .containsSame(item);
-    optionalItem.ifPresent(detailedItem -> {
-      assertThat(detailedItem.getId()).isEqualTo(item.getId());
-      assertThat(detailedItem.getItens()).isEqualTo(item.getItens());
-      assertThat(detailedItem.getIdentifier_pedido()).isEqualTo(item.getIdentifier_pedido());
-      assertThat(detailedItem.getIdentifier_cliente()).isEqualTo(item.getIdentifier_cliente());
-    });
-  }
-
-  @Test
-  void devePermitirDeletarItem() {
-    // Arrange
-    Long id = new Random().nextLong();
-    doNothing().when(repository).deleteById(id);
-    // Act
-    repository.deleteById(id);
-    // Assert
-    verify(repository, times(1)).deleteById(id);
-  }
-
-  @Test
-  void devePermitirAvancarStatusDeUmItem() {
-
-    //ARRANJE
-    Long id = new Random().nextLong();
-    ItemListaPedido item = criarItemPedido();
-    item.setId(id);
-
-    when(repository.findById(any(Long.class))).thenReturn(Optional.of(item));
-    when(repository.save(any(ItemListaPedido.class))).thenReturn(item);
-
-    //ACT
-    ItemListaPedidoUpdateResponseDTO advancedItem = service.advanceStatus(id);
+    ItemPedidoCreateResponseDTO advancedItem = service.advanceStatus(id);
 
     if(advancedItem != null) {
       assertThat(advancedItem.getId()).isEqualTo(item.getId());
-      assertThat(advancedItem.getIdentifier_pedido()).isEqualTo(item.getIdentifier_pedido());
-      assertThat(advancedItem.getIdentifier_cliente()).isEqualTo(item.getIdentifier_cliente());
       assertThat(advancedItem.getStatus()).isEqualTo(StatusPedido.EM_PRODUCAO.toString());
-      assertThat(advancedItem.getRecebimento()).isEqualTo(item.getRecebimento());
-      assertThat(advancedItem.getPreparo()).isEqualTo(item.getPreparo());
-      assertThat(advancedItem.getFechamento()).isEqualTo(item.getFechamento());
-      assertThat(advancedItem.getItens()).isEqualTo(item.getItens());
     }
 
   }
 
   private ItemListaPedido criarItemPedido() {
     var itemLista = new ItemListaPedido();
-    itemLista.setIdentifier_pedido("1");
-    itemLista.setIdentifier_cliente("10");
-    itemLista.setRecebimento(new Timestamp(new Date().getTime()));
     itemLista.setStatus(StatusPedido.SOLICITADO);
-    List<String> items = new ArrayList<String>();
-    items.add("Cheese Burguer");
-    items.add("Batata G c/ Bacon");
-    items.add("Sorvete de manga com cobertura de menta");
-    items.add("Coca Zero 1,5L");
-    items.add("Eno Guaraná");
-    itemLista.setItens(items);
+    itemLista.setCreated_at(new Date());
     return itemLista;
   }
 
