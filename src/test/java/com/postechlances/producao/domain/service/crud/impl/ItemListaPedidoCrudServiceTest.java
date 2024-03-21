@@ -75,7 +75,7 @@ public class ItemListaPedidoCrudServiceTest {
     var item1 = criarItemPedido();
     item1.setId("ab" + new Random().nextInt() + "cdf");
     var item2 = criarItemPedido();
-    item2.setId("ab" + new Random().nextInt() + "cdf");
+    item2.setId("red" + new Random().nextInt() + "blu");
 
     var itens = Arrays.asList(
       item1,
@@ -93,10 +93,10 @@ public class ItemListaPedidoCrudServiceTest {
       .hasSize(2);
       //.containsExactlyInAnyOrder(item1, item2);
     assertThat(resultado.get(0).getId()).isEqualTo(item1.getId());
-    assertThat(resultado.get(0).getStatus()).isEqualTo(item1.getStatus().toString());
+    assertThat(resultado.get(0).getStatus().toString()).isEqualTo(item1.getStatus().toString());
 
     assertThat(resultado.get(1).getId()).isEqualTo(item2.getId());
-    assertThat(resultado.get(1).getStatus()).isEqualTo(item2.getStatus().toString());
+    assertThat(resultado.get(1).getStatus().toString()).isEqualTo(item2.getStatus().toString());
   }
 
   @Test
@@ -115,7 +115,7 @@ public class ItemListaPedidoCrudServiceTest {
 
     if(advancedItem != null) {
       assertThat(advancedItem.getId()).isEqualTo(item.getId());
-      assertThat(advancedItem.getStatus()).isEqualTo(StatusPedido.EM_PRODUCAO.toString());
+      assertThat(advancedItem.getStatus().toString()).isEqualTo(StatusPedido.EM_PRODUCAO.toString());
     }
 
   }
