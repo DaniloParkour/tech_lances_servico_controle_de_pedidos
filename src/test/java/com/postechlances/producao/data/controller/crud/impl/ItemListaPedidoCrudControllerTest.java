@@ -89,17 +89,6 @@ public class ItemListaPedidoCrudControllerTest {
     fail("Teste não implementado!");
   }
 
-  void deveDetalharPedido() {
-    fail("Teste não implementado!");
-  }
-
-  void deveDeletarPedido() {
-    fail("Teste não implementado!");
-  }
-  void deveAlterarPedido() {
-    fail("Teste não implementado!");
-  }
-
   void deveAvancarStatusDoPedido() {
     fail("Teste não implementado!");
   }
