@@ -26,11 +26,22 @@ public class ItemListaPedidoCrudService implements IItemListaPedidoCrudService {
 
   @Override
   public ItemPedidoCreateResponseDTO create(ItemPedidoCreateRequestDTO request) {
-    ItemListaPedido itemToCreate = mapper.toObject(request, ItemListaPedido.class);
+    //ItemListaPedido itemToCreate = mapper.toObject(request, ItemListaPedido.class);
+
+    ItemListaPedido itemToCreate = new ItemListaPedido();
+    itemToCreate.setId(request.getId());
     itemToCreate.setCreated_at(new Date());
     itemToCreate.setStatus(StatusPedido.SOLICITADO);
     ItemListaPedido createdItem = repository.save(itemToCreate);
-    return mapper.toObject(createdItem, ItemPedidoCreateResponseDTO.class);
+
+    //return mapper.toObject(createdItem, ItemPedidoCreateResponseDTO.class);
+
+    ItemPedidoCreateResponseDTO response = new ItemPedidoCreateResponseDTO();
+    response.setId(createdItem.getId());
+    response.setStatus(createdItem.getStatus());
+    response.setCreated_at(createdItem.getCreated_at());
+
+    return response;
   }
 
   @Override

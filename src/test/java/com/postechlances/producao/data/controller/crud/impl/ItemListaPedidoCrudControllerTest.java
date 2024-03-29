@@ -1,104 +1,109 @@
 package com.postechlances.producao.data.controller.crud.impl;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.postechlances.producao.data.dto.crud.request.ItemPedidoCreateRequestDTO;
+import com.postechlances.producao.data.dto.crud.response.ItemPedidoCreateResponseDTO;
 import com.postechlances.producao.domain.enums.StatusPedido;
-import com.postechlances.producao.domain.messaging.TechFoodProducer;
-import com.postechlances.producao.domain.model.ItemListaPedido;
-import com.postechlances.producao.domain.repository.ItemListaPedidoRepository;
 import com.postechlances.producao.domain.service.crud.impl.ItemListaPedidoCrudService;
-import com.postechlances.producao.infra.mapper.impl.GenericMapper;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.modelmapper.ModelMapper;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.fail;
-import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
+@ExtendWith(MockitoExtension.class)
 public class ItemListaPedidoCrudControllerTest {
 
-  private MockMvc mockMvc;
+  @InjectMocks
+  ItemListaPedidoCrudController controller;
 
   @Mock
-  private ItemListaPedidoCrudService service;
+  ItemListaPedidoCrudService service;
 
-  @Mock
-  private ItemListaPedidoRepository repository;
-
-  @Mock
-  private TechFoodProducer techFoodProducer;
-
-  AutoCloseable mock;
+  MockMvc mockMvc;
 
   @BeforeEach
-  void setup() {
-    mock = MockitoAnnotations.openMocks(this);
-
-    service = new ItemListaPedidoCrudService(
-      new GenericMapper(new ModelMapper()),
-      repository,
-      techFoodProducer
-    );
-
-    ItemListaPedidoCrudController controller = new ItemListaPedidoCrudController(service);
-
-    mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
-
+  public void setup() {
+    mockMvc = MockMvcBuilders.standaloneSetup(controller).alwaysDo(print()).build();
   }
 
-  @AfterEach
-  void tearDown() throws Exception {
-    mock.close();
-  }
+  @Test
+  public void deveCriarPedido() throws Exception {
 
-  public static String asJsonString(final Object obj) throws JsonProcessingException {
-    return new ObjectMapper().writeValueAsString(obj);
-  }
+    ItemPedidoCreateRequestDTO deveCriarPedidoRequest = new ItemPedidoCreateRequestDTO();
+    deveCriarPedidoRequest.setId("teste");
+    deveCriarPedidoRequest.setStatus(StatusPedido.SOLICITADO);
 
-  //@Test
-  void deveCriarPedido() throws Exception {
+    ItemPedidoCreateResponseDTO deveCriarPedidoResponse = new ItemPedidoCreateResponseDTO();
+    deveCriarPedidoResponse.setId("teste");
+    deveCriarPedidoResponse.setStatus(StatusPedido.SOLICITADO);
+    deveCriarPedidoResponse.setCreated_at(new Date());
 
-    var pedido = criarItemPedido();
-    when(service.create(any(ItemPedidoCreateRequestDTO.class)))
-      .thenAnswer(i -> i.getArgument(0));
+    when(service.create(any(ItemPedidoCreateRequestDTO.class))).thenReturn(deveCriarPedidoResponse);
 
-    //ACT
     mockMvc.perform(
-      post("/ola")
-        .content(asJsonString(pedido))
-    ).andExpect(status().isCreated());
+      post("/itemlistapedido")
+        .contentType(MediaType.APPLICATION_JSON)
+        .content("{\"id\":\"teste\",\"status\":\"SOLICITADO\"}")
+    ).andExpect(status().isOk());
 
-    verify(service, times(1)).create(any(ItemPedidoCreateRequestDTO.class));
+    //verify(service, times(1)).create(any(ItemPedidoCreateRequestDTO.class));
+    verify(service).create(deveCriarPedidoRequest);
+    verifyNoMoreInteractions(service);
+
   }
 
-  void deveListarPedidos() {
-    fail("Teste não implementado!");
+  @Test
+  void deveListarPedidos() throws Exception {
+
+    List<ItemPedidoCreateResponseDTO> listaRetorno = new ArrayList<ItemPedidoCreateResponseDTO>();
+
+    ItemPedidoCreateResponseDTO item = new ItemPedidoCreateResponseDTO();
+    item.setId("teste1");
+    item.setStatus(StatusPedido.SOLICITADO);
+    item.setCreated_at(new Date());
+    listaRetorno.add(item);
+
+    ItemPedidoCreateResponseDTO item2 = new ItemPedidoCreateResponseDTO();
+    item2.setId("teste2");
+    item2.setStatus(StatusPedido.EM_PRODUCAO);
+    item2.setCreated_at(new Date());
+    listaRetorno.add(item2);
+
+    when(service.list()).thenReturn(listaRetorno);
+
+    mockMvc.perform(get("/itemlistapedido")).andExpect(status().isOk());
+
+    verify(service, times(1)).list();
+
   }
 
-  void deveAvancarStatusDoPedido() {
-    fail("Teste não implementado!");
-  }
+  @Test
+  public void deveAcavarOStatusDoPedido() throws Exception {
+    ItemPedidoCreateResponseDTO respostaAvanvarPedido = new ItemPedidoCreateResponseDTO();
+    respostaAvanvarPedido.setId("teste");
+    respostaAvanvarPedido.setStatus(StatusPedido.EM_PRODUCAO);
+    respostaAvanvarPedido.setCreated_at(new Date());
 
-  private ItemListaPedido criarItemPedido() {
-    var itemLista = new ItemListaPedido();
-    itemLista.setId("ac12poc203pd");
-    itemLista.setStatus(StatusPedido.SOLICITADO);
-    itemLista.setCreated_at(new Date());
-    return itemLista;
+    when(service.advanceStatus(any(String.class))).thenReturn(respostaAvanvarPedido);
+
+    mockMvc.perform(get("/itemlistapedido/advancestatus/{idPedido}", "teste")).andExpect(status().isOk());
+
   }
 
 }
